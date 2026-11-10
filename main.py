@@ -4,13 +4,22 @@ import settings
 from core import renderer
 from algorithms.rectangles import generate_rectangles
 
+palette = [
+    (235, 90, 90),
+    (245, 170, 90),
+    (245, 215, 130),
+    (100, 170, 190),
+    (100, 120, 180),
+    (150, 110, 180)
+]
+
 rectangles = generate_rectangles(
     100, 100,
     1000, 600,
     depth=8,
-    seed=402,
+    seed=1223,
     min_size=35,
-    stop_chance=0.0001
+    stop_chance=0.1
 )
 
 def main():
@@ -36,7 +45,7 @@ def main():
         screen.fill(settings.BACKGROUND)
 
         for rect in rectangles:
-            color = (100, 180, 240)
+            color = palette[rect.depth % len(palette)]
 
             renderer.draw_filled_rectangle(
                 screen,
