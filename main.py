@@ -38,7 +38,7 @@ triangles = generate_triangles(
 
 branches = generate_branches(
     start=(600, 700),
-    length=120,
+    length=15,
     angle=-math.pi / 2,
     depth=9,
     angle_spread=0.5,

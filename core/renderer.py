@@ -58,10 +58,7 @@ def draw_filled_rectangle(
 def draw_branches(surface, branches, palette):
 
     for branch in branches:
-        color = palette[
-            branch.depth %len(palette)
-        ]
-
+        color = palette[branch.depth % len(palette)]
         thickness = max(1, branch.depth)
 
         pygame.draw.line(
