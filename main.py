@@ -29,7 +29,7 @@ def main():
             screen,
             100, 100,
             1000, 600,
-            depth=2
+            depth=7
         )
 
         pygame.display.flip()
