@@ -1,6 +1,6 @@
 WIDTH = 1200
 HEIGHT = 800
-FPS = 60
+FPS = 6
 TITLE = "DEVIDE - Generate Art"
 
 BACKGROUND = (18,18,24)

@@ -1,6 +1,7 @@
 import pygame
 import settings
 from core import renderer
+from algorithms.rectangles import divide_rectangle
 
 def main():
     pygame.init()
@@ -24,35 +25,11 @@ def main():
 
         screen.fill(settings.BACKGROUND)
 
-        renderer.draw_rectangle(
+        divide_rectangle(
             screen,
             100, 100,
             1000, 600,
-            settings.CANVAS_BACKGROUND
-        )
-
-        renderer.draw_rectangle(
-            screen, 200, 200, 200, 150,
-            (255, 100, 100)
-        )
-
-        renderer.draw_triangle(
-            screen,
-            [(600, 200), (500, 400), (700, 400)],
-            (100,200,255)
-        )
-
-        renderer.draw_circle(
-            screen, 900, 300, 75,
-            (150, 255, 150)
-        )
-
-        renderer.draw_line(
-            screen,
-            (200,500),
-            (1000, 500),
-            settings.WHITE,
-            3
+            depth=2
         )
 
         pygame.display.flip()

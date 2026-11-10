@@ -26,3 +26,19 @@ def draw_circle(surface, x, y, radius, color):
         (x, y),
         radius
     )
+
+def draw_filled_rectangle(
+    surface,
+    x, y,
+    width, height,
+    color,
+    padding=3
+):
+    rect = pygame.Rect(
+        x + padding,
+        y + padding,
+        width - padding * 2,
+        height - padding *2
+    )
+
+    pygame.draw.rect(surface, color, rect)
