@@ -1,11 +1,18 @@
 import pygame
-from algorithms import rectangles
 import settings
 import math
+import random
+
 from core import renderer
+from core.randomness import get_rng
+
 from algorithms.rectangles import generate_rectangles
 from algorithms.triangles import generate_triangles
 from algorithms.branching import generate_branches
+
+rectangle_rng = get_rng(settings.SEED, "rectangles")
+triangle_rng = get_rng(settings.SEED, "triangles")
+branching_rng = get_rng(settings.SEED, "branch")
 
 palette = [
     (235, 90, 90),
@@ -20,7 +27,7 @@ rectangles = generate_rectangles(
     100, 100,
     1000, 600,
     depth=8,
-    seed=1223,
+    rng=branching_rng,
     min_size=35,
     stop_chance=0.1
 )
@@ -42,7 +49,8 @@ branches = generate_branches(
     angle=-math.pi / 2,
     depth=9,
     angle_spread=0.5,
-    length_factor=0.7
+    length_factor=1.0,
+    rng=branching_rng
 )
 
 def main():

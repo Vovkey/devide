@@ -16,11 +16,10 @@ def generate_rectangles(
     x, y,
     width, height,
     depth,
-    seed=None,
+    rng,
     min_size=35,
     stop_chance=0.15
 ):
-    rng = random.Random(seed)
     rectangles = []
 
     def divide(x, y, width, height, depth):

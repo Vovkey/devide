@@ -1,6 +1,7 @@
 import math
 from dataclasses import dataclass
 
+
 @dataclass
 class Branch:
     start: tuple
@@ -12,8 +13,11 @@ def generate_branches(
     length,
     angle,
     depth,
+    rng,
     angle_spread=0.5,
-    length_factor=0.7
+    length_factor=0.7,
+    angle_jitter=0.08,
+    length_jitter=0.8,
 ):
 
     branches = []
@@ -33,19 +37,29 @@ def generate_branches(
             )
         )
 
-        new_length = length * length_factor
+        new_length = (current_length * length_factor * rng.uniform(1 - length_jitter, 1 + length_jitter))
+
+        left_angle = (
+            current_angle - angle_spread
+            + rng.uniform(-angle_jitter, angle_jitter)
+        )
+
+        right_angle = (
+            current_angle + angle_spread
+            + rng.uniform(-angle_jitter, angle_jitter)
+        )
 
         grow(
             end_x, end_y,
             new_length,
-            current_angle - angle_spread,
+            left_angle,
             current_depth - 1
         )
 
         grow(
             end_x, end_y,
             new_length,
-            current_angle + angle_spread,
+            right_angle,
             current_depth - 1
         )
     grow(
