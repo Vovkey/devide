@@ -1,59 +1,69 @@
 import random
 from core.renderer import draw_filled_rectangle
+from dataclasses import dataclass
 
-def divide_rectangle(
-    surface,
+from settings import HEIGHT
+
+@dataclass
+class Rectangle:
+    x: float
+    y: float
+    width: float
+    height: float
+    depth: int
+
+def generate_rectangles(
     x, y,
     width, height,
     depth,
-    min_size=20
+    seed=None,
+    min_size=35,
+    stop_chance=0.15
 ):
-    if depth <= 0:
-        return
+    rng = random.Random(seed)
+    rectangles = []
 
-    if width < min_size or height < min_size:
-        return
+    def divide(x, y, width, height, depth):
 
-    vertical = random.choice([True, False])
+        if depth <= 0:
+            rectangles.append(
+                Rectangle(x, y, width, height, depth)
+            )
+            return
 
-    if vertical:
+        if width < min_size * 2 or height < min_size * 2:
+            rectangles.append(
+                Rectangle(x, y, width, height, depth)
+            )
+            return
 
-        split = random.uniform(0.35, 0.65) * width
+        if rng.random() < stop_chance:
+            rectangles.append(
+                Rectangle(x, y, width, height, depth)
+            )
+            return
 
-        first_width = split
-        second_width = width - split
+        vertical = rng.choice([True, False])
 
-        first = (x, y, first_width, height)
-        second = (x + split, y, second_width, height)
+        if vertical:
+            split = rng.uniform(0.35, 0.65) * width
 
-    else:
+            divide(x, y, split, height, depth -1)
+            divide(
+                x + split, y,
+                width - split, height,
+                depth -1
+            )
 
-        split = random.uniform(0.35, 0.65) * height
+        else:
+            split = rng.uniform(0.35, 0.65) * height
 
-        first_height = split
-        second_height = height - split
+            divide(x, y, width, split, depth -1)
+            divide(
+                x, y + split,
+                width,height - split,
+                depth -1
+            )
 
-        first = (x, y, width, first_height)
-        second = (x, y + split, width, second_height)
-
-    colors = [
-        (240, 100, 100),
-        (100, 100 ,240),
-        (240, 200, 100),
-        (150, 220, 160)
-    ]
-
-    draw_filled_rectangle(
-        surface,
-        x, y,
-        width, height,
-        random.choice(colors)
-    )
-
-    divide_rectangle(
-        surface, *first, depth - 1, min_size
-    )
-
-    divide_rectangle(
-        surface, *second, depth - 1, min_size
-    )
+    divide(x, y, width, height, depth)
+    return rectangles
