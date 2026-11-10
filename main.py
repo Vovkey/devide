@@ -1,8 +1,11 @@
 import pygame
 from algorithms import rectangles
 import settings
+import math
 from core import renderer
 from algorithms.rectangles import generate_rectangles
+from algorithms.triangles import generate_triangles
+from algorithms.branching import generate_branches
 
 palette = [
     (235, 90, 90),
@@ -20,6 +23,26 @@ rectangles = generate_rectangles(
     seed=1223,
     min_size=35,
     stop_chance=0.1
+)
+
+triangle_points = (
+    (600, 100),
+    (200, 650),
+    (1000, 650)
+)
+
+triangles = generate_triangles(
+    triangle_points,
+    depth=5
+)
+
+branches = generate_branches(
+    start=(600, 700),
+    length=120,
+    angle=-math.pi / 2,
+    depth=9,
+    angle_spread=0.5,
+    length_factor=0.7
 )
 
 def main():
@@ -56,6 +79,18 @@ def main():
                 color,
                 padding=3
             )
+
+        renderer.draw_triangles(
+            screen,
+            triangles,
+            palette
+        )
+
+        renderer.draw_branches(
+            screen,
+            branches,
+            palette
+        )
 
         pygame.display.flip()
 

@@ -1,3 +1,4 @@
+import math
 import pygame
 
 def draw_rectangle(surface, x, y, width, height, color):
@@ -9,6 +10,17 @@ def draw_rectangle(surface, x, y, width, height, color):
 
 def draw_triangle(surface, points, color):
     pygame.draw.polygon(surface, color, points)
+
+def draw_triangles(surface, triangles, palette):
+
+    for i, triangle in enumerate(triangles):
+        color = palette[i % len(palette)]
+
+        pygame.draw.polygon(
+            surface,
+            color,
+            triangle.points
+        )
 
 def draw_line(surface, start, end, color, thickness=2):
     pygame.draw.line(
@@ -42,3 +54,20 @@ def draw_filled_rectangle(
     )
 
     pygame.draw.rect(surface, color, rect)
+
+def draw_branches(surface, branches, palette):
+
+    for branch in branches:
+        color = palette[
+            branch.depth %len(palette)
+        ]
+
+        thickness = max(1, branch.depth)
+
+        pygame.draw.line(
+            surface,
+            color,
+            branch.start,
+            branch.end,
+            thickness
+        )
