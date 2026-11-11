@@ -5,6 +5,7 @@ import random
 
 from core import renderer
 from core.randomness import get_rng
+from core.generator import generate_art
 
 from algorithms.rectangles import generate_rectangles
 from algorithms.triangles import generate_triangles
@@ -23,13 +24,14 @@ palette = [
     (150, 110, 180)
 ]
 
-rectangles = generate_rectangles(
-    100, 100,
-    1000, 600,
+rectangles = generate_art(
+    "rectangles",
+    settings.SEED,
+    x=100,
+    y=100,
+    width=1000,
+    height=600,
     depth=8,
-    rng=branching_rng,
-    min_size=35,
-    stop_chance=0.1
 )
 
 triangle_points = (
@@ -38,19 +40,20 @@ triangle_points = (
     (1000, 650)
 )
 
-triangles = generate_triangles(
-    triangle_points,
+triangles = generate_art(
+    "triangles",
+    settings.SEED,
+    points=triangle_points,
     depth=5
 )
 
-branches = generate_branches(
+branches = generate_art(
+    "branching",
+    settings.SEED,
     start=(600, 700),
-    length=15,
+    length=150,
     angle=-math.pi / 2,
     depth=9,
-    angle_spread=0.5,
-    length_factor=1.0,
-    rng=branching_rng
 )
 
 def main():
