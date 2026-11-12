@@ -72,6 +72,7 @@ def main():
 
     sidebar = Sidebar()
     current_art = []
+    current_art_algorithm = None
 
     running = True
 

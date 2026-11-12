@@ -24,6 +24,29 @@ def generate_triangles(
 
     triangles = []
 
+    if variation > 0:
+        points = list(points)
+
+        side_lengths = [
+            ((points[i][0] - points[(i+1) % 3][0]) ** 2 +
+             (points[i][1] - points[(i+1) % 3][1]) **2) ** 0.5
+            for i in range(3)
+        ]
+
+        scale = sum(side_lengths) / 3
+
+        max_offset = scale * variation * 0.15
+
+        randomized_points = []
+
+        for x, y in points:
+            new_x = x + rng.uniform(-max_offset, max_offset)
+            new_y = y + rng.uniform(-max_offset, max_offset)
+
+            randomized_points.append((new_x, new_y))
+
+        points = randomized_points
+
     def subdivivde(a, b, c, current_depth):
 
         if current_depth <= 0:
