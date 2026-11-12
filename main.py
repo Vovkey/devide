@@ -82,6 +82,21 @@ def main():
                 running = False
 
             action = sidebar.handle_event(event)
+            if sidebar.variation_changed:
+                sidebar.variation_changed = False
+
+                if current_art_algorithm == "triangles":
+                    current_art = generate_art(
+                        "triangles",
+                        int(sidebar.seed or "0"),
+                        points=(
+                            (screen.get_width() // 2, 80),
+                            (330, screen.get_height() - 80),
+                            (screen.get_width() - 40, screen.get_height() - 80)
+                        ),
+                        depth=5,
+                        variation=sidebar.variation
+                    )
 
             if action == "generate":
 
@@ -108,7 +123,7 @@ def main():
                         seed,
                         points=((720, 100), (370, 650), (1070, 650)),
                         depth=5,
-                        variation=0.15
+                        variation=sidebar.variation
                     )
 
                 elif algorithm == "branching":
