@@ -11,9 +11,12 @@ from algorithms.rectangles import generate_rectangles
 from algorithms.triangles import generate_triangles
 from algorithms.branching import generate_branches
 
+from ui.sidebar import Sidebar
+
 rectangle_rng = get_rng(settings.SEED, "rectangles")
 triangle_rng = get_rng(settings.SEED, "triangles")
 branching_rng = get_rng(settings.SEED, "branch")
+
 
 palette = [
     (235, 90, 90),
@@ -67,47 +70,98 @@ def main():
 
     clock = pygame.time.Clock()
 
+    sidebar = Sidebar()
+    current_art = []
+
     running = True
 
     while running:
-
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 running = False
 
+            action = sidebar.handle_event(event)
+
+            if action == "generate":
+
+                algorithm = sidebar.algorithms[
+                    sidebar.selected_algorithm
+                ].lower()
+
+                seed = int(sidebar.seed or 0)
+
+                if algorithm == "rectangles":
+                    current_art = generate_art(
+                        algorithm,
+                        seed,
+                        x=320,
+                        y=100,
+                        width=800,
+                        height=600,
+                        depth=8
+                    )
+
+                elif algorithm == "triangles":
+                    current_art = generate_art(
+                        algorithm,
+                        seed,
+                        points=((720, 100), (370, 650), (1070, 650)),
+                        depth=5,
+                        variation=0.15
+                    )
+
+                elif algorithm == "branching":
+                    current_art = generate_art(
+                        algorithm,
+                        seed,
+                        start=(720, 700),
+                        length=150,
+                        angle=-math.pi / 2,
+                        depth=9
+                    )
+
+                current_art_algorithm = algorithm
+
         screen.fill(settings.BACKGROUND)
 
-        for rect in rectangles:
-            color = palette[rect.depth % len(palette)]
+        if current_art and current_art_algorithm == "rectangles":
+                for rect in current_art:
+                    color = settings.ACCENT
+                    renderer.draw_filled_rectangle(
+                        screen,
+                        rect.x,
+                        rect.y,
+                        rect.width,
+                        rect.height,
+                        color,
+                        padding=3
+                    )
 
-            renderer.draw_filled_rectangle(
-                screen,
-                rect.x,
-                rect.y,
-                rect.width,
-                rect.height,
-                color,
-                padding=3
-            )
+        elif current_art and current_art_algorithm == "triangles":
+                renderer.draw_triangles(
+                    screen,
+                    current_art,
+                    [settings.ACCENT, (235, 90, 90), (245, 170, 90)]
+                )
 
-        renderer.draw_triangles(
-            screen,
-            triangles,
-            palette
-        )
+        elif current_art and current_art_algorithm == "branching":
+                renderer.draw_branches(
+                    screen,
+                    current_art,
+                    [settings.ACCENT, (235, 90, 90), (245, 170, 90)]
+                )
 
-        renderer.draw_branches(
-            screen,
-            branches,
-            palette
-        )
+
+        sidebar.draw(screen)
 
         pygame.display.flip()
 
         clock.tick(settings.FPS)
 
     pygame.quit()
+
+
 
 if __name__ == "__main__":
     main()

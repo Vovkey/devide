@@ -1,17 +1,26 @@
 from dataclasses import dataclass
+import random
 
 @dataclass
 class Triangle:
     points: tuple
     depth: int
 
-def midpoint(a, b):
+def midpoint(a, b, rng, variation):
+
+    t = 0.5 + rng.uniform(-variation, variation)
+
     return (
-        (a[0] + b[0]) / 2,
-        (a[1] + b[1]) / 2
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t
     )
 
-def generate_triangles(points, depth):
+def generate_triangles(
+    points,
+    depth,
+    rng,
+    variation=0.0
+):
 
     triangles = []
 
@@ -23,9 +32,9 @@ def generate_triangles(points, depth):
             )
             return
 
-        ab = midpoint(a, b)
-        bc = midpoint(b, c)
-        ca = midpoint(c, a)
+        ab = midpoint(a, b, rng, variation)
+        bc = midpoint(b, c, rng, variation)
+        ca = midpoint(c, a, rng, variation)
 
         subdivivde(a, ab, ca, current_depth - 1)
         subdivivde(ab, b, bc, current_depth -1)

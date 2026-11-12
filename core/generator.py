@@ -15,7 +15,8 @@ def generate_art(algorithm, seed, **params):
         )
 
     elif algorithm == "triangles":
-        return generate_triangles(**params)
+        rng = get_rng(seed, "triangles")
+        return generate_triangles(**params, rng=rng)
 
     elif algorithm == "branching":
         rng = get_rng(seed, "branching")
