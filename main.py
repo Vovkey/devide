@@ -1,7 +1,11 @@
 import pygame
+from pygame.key import get_mods
 import settings
 import math
 import random
+import os
+
+from datetime import datetime
 
 from core import renderer
 from core.randomness import get_rng
@@ -60,6 +64,29 @@ branches = generate_art(
     depth=9,
 )
 
+def export_artwork(screen, seed):
+    canvas_x = 270
+
+    canvas_rect = pygame.Rect(
+        canvas_x,
+        0,
+        screen.get_width() - canvas_x,
+        screen.get_height()
+    )
+
+    canvas = screen.subsurface(canvas_rect).copy()
+
+    os.makedirs("exports", exist_ok=True)
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    filename = f"devide_seed-{seed}_{timestamp}.png"
+
+    filepath = os.path.join("exports", filename)
+
+    pygame.image.save(canvas, filepath)
+
+    print(f"Artwork exported: {filepath}")
+
 def main():
     pygame.init()
 
@@ -76,8 +103,23 @@ def main():
 
     running = True
 
+    export_requested = None
+
     while running:
         for event in pygame.event.get():
+
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                if close_button.collidepoint(event.pos):
+                    running = False
+
+            if event.type == pygame.KEYDOWN:
+                if (
+                    event.key == pygame.K_s
+                    and pygame.key.get_mods() & pygame.KMOD_CTRL
+                    and not sidebar.seed_active
+                ):
+                    seed = sidebar.seed or "0"
+                    export_requested = seed
 
             if event.type == pygame.QUIT:
                 running = False
@@ -141,6 +183,13 @@ def main():
 
         screen.fill(settings.BACKGROUND)
 
+        close_button = pygame.Rect(
+            screen.get_width() - 45,
+            10,
+            24,
+            24
+        )
+
         palette_name = sidebar.palette_names[sidebar.selected_palette]
         colors = PALETTES[palette_name]
 
@@ -172,6 +221,27 @@ def main():
 
 
         sidebar.draw(screen)
+
+        if export_requested is not None:
+            export_artwork(screen, export_requested)
+            export_requested = None
+
+        pygame.draw.rect(
+            screen,
+            (180, 55, 65),
+            close_button,
+            border_radius=8
+        )
+
+        close_text = pygame.font.SysFont(None, 32).render(
+            "X", True, (255, 255, 255)
+        )
+
+        close_text_rect = close_text.get_rect(
+            center=close_button.center
+        )
+
+        screen.blit(close_text, close_text_rect)
 
         pygame.display.flip()
 
