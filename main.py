@@ -6,6 +6,7 @@ import random
 from core import renderer
 from core.randomness import get_rng
 from core.generator import generate_art
+from core.palettes import PALETTES
 
 from algorithms.rectangles import generate_rectangles
 from algorithms.triangles import generate_triangles
@@ -140,6 +141,9 @@ def main():
 
         screen.fill(settings.BACKGROUND)
 
+        palette_name = sidebar.palette_names[sidebar.selected_palette]
+        colors = PALETTES[palette_name]
+
         if "rectangles" in current_art:
                 for rect in current_art["rectangles"]:
                     renderer.draw_filled_rectangle(
@@ -148,7 +152,7 @@ def main():
                         rect.y,
                         rect.width,
                         rect.height,
-                        settings.ACCENT,
+                        colors["rectangles"][0],
                         padding=3
                     )
 
@@ -156,14 +160,14 @@ def main():
                 renderer.draw_triangles(
                     screen,
                     current_art["triangles"],
-                    [settings.ACCENT, (235, 90, 90), (245, 170, 90)]
+                    colors["triangles"]
                 )
 
         if "branching" in current_art:
                 renderer.draw_branches(
                     screen,
                     current_art["branching"],
-                    [settings.ACCENT, (235, 90, 90), (245, 170, 90)]
+                    colors["branching"]
                 )
 
 

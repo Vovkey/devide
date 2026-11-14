@@ -61,6 +61,17 @@ class Sidebar:
             20, 650, 240, 50
         )
 
+        self.palette_names = [
+            "Ocean",
+            "Sunset",
+            "Forest",
+            "Neon",
+            "Monochrome"
+        ]
+        self.selected_palette = 0
+        self.palette_button = pygame.Rect(10, 530, 240, 45)
+        self.palette_last_click = -500
+
     def draw(self, screen):
 
         pygame.draw.rect(
@@ -204,6 +215,44 @@ class Sidebar:
             9
         )
 
+        label = self.font.render(
+            "COLOR PALETTE",
+            True,
+            settings.ACCENT
+        )
+
+        screen.blit(label, (10, 495))
+
+        pygame.draw.rect(
+            screen,
+            (45, 45, 55),
+            self.palette_button,
+            border_radius=8
+        )
+
+        pygame.draw.rect(
+            screen,
+            settings.ACCENT,
+            self.palette_button,
+            2,
+            border_radius=8
+        )
+
+        palette_name = self.palette_names[self.selected_palette]
+
+        text = self.font.render(
+            f"  {palette_name}  ",
+            True,
+            settings.WHITE
+        )
+
+        text_rect = text.get_rect(
+            center=self.palette_button.center
+        )
+
+        screen.blit(text, text_rect)
+
+
     def handle_event(self, event):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -235,6 +284,16 @@ class Sidebar:
 
                 if self.generate_button.collidepoint(event.pos):
                     return "generate"
+
+                if self.palette_button.collidepoint(event.pos):
+                    current_time = pygame.time.get_ticks()
+
+                    if current_time - self.palette_last_click >= 500:
+                        self.selected_palette = (
+                            self.selected_palette + 1
+                        ) % len(self.palette_names)
+
+                        self.palette_last_click = current_time
 
         if event.type == pygame.KEYDOWN and self.seed_active:
             if event.key == pygame.K_BACKSPACE:
