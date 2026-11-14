@@ -71,8 +71,7 @@ def main():
     clock = pygame.time.Clock()
 
     sidebar = Sidebar()
-    current_art = []
-    current_art_algorithm = None
+    current_art = {}
 
     running = True
 
@@ -86,8 +85,8 @@ def main():
             if sidebar.variation_changed:
                 sidebar.variation_changed = False
 
-                if current_art_algorithm == "triangles":
-                    current_art = generate_art(
+                if "triangles" in current_art:
+                    current_art["triangles"] = generate_art(
                         "triangles",
                         int(sidebar.seed or "0"),
                         points=(
@@ -100,71 +99,70 @@ def main():
                     )
 
             if action == "generate":
-
-                algorithm = sidebar.algorithms[
-                    sidebar.selected_algorithm
-                ].lower()
-
                 seed = int(sidebar.seed or 0)
 
-                if algorithm == "rectangles":
-                    current_art = generate_art(
-                        algorithm,
+                current_art = {}
+
+                if "rectangles" in sidebar.selected_algorithms:
+                    current_art["rectangles"] = generate_art(
+                        "rectangles",
                         seed,
-                        x=320,
-                        y=100,
-                        width=800,
-                        height=600,
+                        x=310,
+                        y=50,
+                        width=screen.get_width() - 350,
+                        height=screen.get_height() - 100,
                         depth=8
                     )
 
-                elif algorithm == "triangles":
-                    current_art = generate_art(
-                        algorithm,
+                if "triangles" in sidebar.selected_algorithms:
+                    current_art["triangles"] = generate_art(
+                        "triangles",
                         seed,
-                        points=((720, 100), (370, 650), (1070, 650)),
+                        points=(
+                            (screen.get_width() // 2, 80),
+                            (330, screen.get_height() - 80),
+                            (screen.get_width() - 40, screen.get_height() - 80)
+                        ),
                         depth=5,
                         variation=sidebar.variation
                     )
 
-                elif algorithm == "branching":
-                    current_art = generate_art(
-                        algorithm,
+                if "branching" in sidebar.selected_algorithms:
+                    current_art["branching"] = generate_art(
+                        "branching",
                         seed,
-                        start=(720, 700),
+                        start=(screen.get_width() // 2, screen.get_height() - 50),
                         length=150,
                         angle=-math.pi / 2,
                         depth=9
                     )
 
-                current_art_algorithm = algorithm
 
         screen.fill(settings.BACKGROUND)
 
-        if current_art and current_art_algorithm == "rectangles":
-                for rect in current_art:
-                    color = settings.ACCENT
+        if "rectangles" in current_art:
+                for rect in current_art["rectangles"]:
                     renderer.draw_filled_rectangle(
                         screen,
                         rect.x,
                         rect.y,
                         rect.width,
                         rect.height,
-                        color,
+                        settings.ACCENT,
                         padding=3
                     )
 
-        elif current_art and current_art_algorithm == "triangles":
+        if "triangles" in current_art:
                 renderer.draw_triangles(
                     screen,
-                    current_art,
+                    current_art["triangles"],
                     [settings.ACCENT, (235, 90, 90), (245, 170, 90)]
                 )
 
-        elif current_art and current_art_algorithm == "branching":
+        if "branching" in current_art:
                 renderer.draw_branches(
                     screen,
-                    current_art,
+                    current_art["branching"],
                     [settings.ACCENT, (235, 90, 90), (245, 170, 90)]
                 )
 

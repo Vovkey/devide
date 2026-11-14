@@ -2,6 +2,10 @@ import select
 
 import pygame
 
+import settings
+
+import algorithms
+
 class Sidebar:
 
     def update_variation(self, mouse_x):
@@ -47,7 +51,7 @@ class Sidebar:
             "Branching"
         ]
 
-        self.selected_algorithm = 0
+        self.selected_algorithms = {"rectangles"}
 
         self.seed = "42"
         self.seed_active = False
@@ -85,11 +89,13 @@ class Sidebar:
                 20, 135 + i * 45, 240, 38
             )
 
-            color = (
-                self.accent
-                if i == self.selected_algorithm
-                else (50, 50, 65)
-            )
+            selected = algorithm.lower() in self.selected_algorithms
+
+            if selected :
+                color = settings.ACCENT
+
+            else:
+                color = (45, 45, 55)
 
             pygame.draw.rect(
                 screen,
@@ -209,13 +215,18 @@ class Sidebar:
 
                 mouse_x, mouse_y = event.pos
 
-                for i in range(len(self.algorithms)):
+                for i, name in enumerate(self.algorithms):
                     rect = pygame.Rect(
                         20, 135 + i * 45, 240, 38
                     )
 
-                    if rect.collidepoint(mouse_x, mouse_y):
-                        self.selected_algorithm = i
+                    if rect.collidepoint(event.pos):
+                        algorithm = name.lower()
+
+                        if algorithm in self.selected_algorithms:
+                            self.selected_algorithms.remove(algorithm)
+                        else:
+                            self.selected_algorithms.add(algorithm)
 
                 if self.slider_track.inflate(0, 25).collidepoint(event.pos):
                     self.slider_dragging = True

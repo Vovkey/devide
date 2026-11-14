@@ -1,19 +1,10 @@
 from dataclasses import dataclass
-import random
 
 @dataclass
 class Triangle:
     points: tuple
     depth: int
 
-def midpoint(a, b, rng, variation):
-
-    t = 0.5 + rng.uniform(-variation, variation)
-
-    return (
-        a[0] + (b[0] - a[0]) * t,
-        a[1] + (b[1] - a[1]) * t
-    )
 
 def generate_triangles(
     points,
@@ -23,6 +14,7 @@ def generate_triangles(
 ):
 
     triangles = []
+    midpoint_cache = {}
 
     if variation > 0:
         points = list(points)
@@ -35,17 +27,28 @@ def generate_triangles(
 
         scale = sum(side_lengths) / 3
 
-        max_offset = scale * variation * 0.15
+        max_offset = scale * variation * 0.08
 
-        randomized_points = []
+        points = [
+            (
+                x + rng.uniform(-max_offset, max_offset),
+                y + rng.uniform(-max_offset, max_offset)
+            )
+            for x, y in points
+        ]
 
-        for x, y in points:
-            new_x = x + rng.uniform(-max_offset, max_offset)
-            new_y = y + rng.uniform(-max_offset, max_offset)
+    def midpoint(a, b):
+        edge = tuple(sorted((a, b)))
 
-            randomized_points.append((new_x, new_y))
+        if edge not in midpoint_cache:
+            t = 0.5 + rng.uniform(-variation, variation) * 0.5
 
-        points = randomized_points
+            midpoint_cache[edge] = (
+                a[0] + (b[0] - a[0]) * t,
+                a[1] + (b[1] - a[1]) * t
+            )
+
+        return midpoint_cache[edge]
 
     def subdivivde(a, b, c, current_depth):
 
@@ -55,9 +58,9 @@ def generate_triangles(
             )
             return
 
-        ab = midpoint(a, b, rng, variation)
-        bc = midpoint(b, c, rng, variation)
-        ca = midpoint(c, a, rng, variation)
+        ab = midpoint(a, b)
+        bc = midpoint(b, c)
+        ca = midpoint(c, a)
 
         subdivivde(a, ab, ca, current_depth - 1)
         subdivivde(ab, b, bc, current_depth -1)
