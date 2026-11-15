@@ -1,10 +1,8 @@
 import select
-
 import pygame
-
 import settings
-
 import algorithms
+import random
 
 class Sidebar:
 
@@ -56,6 +54,7 @@ class Sidebar:
         self.seed = "42"
         self.seed_active = False
         self.seed_input = pygame.Rect(20, 340, 240, 40)
+        self.random_seed_button = pygame.Rect(10, 430, 240, 38)
 
         self.generate_button = pygame.Rect(
             20, 650, 240, 50
@@ -73,7 +72,6 @@ class Sidebar:
         self.palette_last_click = -500
 
     def draw(self, screen):
-
         pygame.draw.rect(
             screen,
             self.background,
@@ -252,17 +250,36 @@ class Sidebar:
 
         screen.blit(text, text_rect)
 
+        pygame.draw.rect(
+            screen,
+            (45, 45, 55),
+            self.random_seed_button,
+            border_radius=6
+        )
+
+        pygame.draw.rect(
+            screen,
+            settings.ACCENT,
+            self.random_seed_button,
+            1,
+            border_radius=6
+        )
+
+        text = self.font.render("Random Seed", True, settings.WHITE)
+        text_rect = text.get_rect(center=self.random_seed_button.center)
+        screen.blit(text, text_rect)
+
+
 
     def handle_event(self, event):
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 
-                self.seed_active = self.seed_input.collidepoint(
-                    event.pos
-                )
+                if self.random_seed_button.collidepoint(event.pos):
+                    self.seed = str(random.randint(0, 999999999999))
+                    self.seed_active = False
+                    return "random_seed"
 
-                mouse_x, mouse_y = event.pos
 
                 for i, name in enumerate(self.algorithms):
                     rect = pygame.Rect(

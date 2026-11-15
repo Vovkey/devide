@@ -141,6 +141,9 @@ def main():
                         variation=sidebar.variation
                     )
 
+            if action == "random_seed":
+                seed = int(sidebar.seed)
+                current_art = {}
             if action == "generate":
                 seed = int(sidebar.seed or 0)
 
@@ -226,22 +229,23 @@ def main():
             export_artwork(screen, export_requested)
             export_requested = None
 
-        pygame.draw.rect(
-            screen,
-            (180, 55, 65),
-            close_button,
-            border_radius=8
-        )
+        if close_button.collidepoint(pygame.mouse.get_pos()):
+            pygame.draw.rect(
+                screen,
+                (180, 55, 65),
+                close_button,
+                border_radius=8
+            )
 
-        close_text = pygame.font.SysFont(None, 32).render(
-            "X", True, (255, 255, 255)
-        )
+            close_text = pygame.font.SysFont(None, 32).render(
+                "X", True, (255, 255, 255)
+            )
 
-        close_text_rect = close_text.get_rect(
-            center=close_button.center
-        )
+            close_text_rect = close_text.get_rect(
+                center=close_button.center
+            )
 
-        screen.blit(close_text, close_text_rect)
+            screen.blit(close_text, close_text_rect)
 
         pygame.display.flip()
 
