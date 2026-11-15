@@ -1,10 +1,7 @@
-import datetime
 import random
-import select
 
 import pygame
 
-import algorithms
 import settings
 
 
@@ -457,12 +454,10 @@ class Sidebar:
             elif event.unicode.isdigit() and len(self.seed) < 12:
                 self.seed += event.unicode
 
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
+        if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
                 self.slider_dragging = False
 
-        if event.type == pygame.MOUSEMOTION:
-           if self.slider_dragging:
+        if event.type == pygame.MOUSEMOTION and self.slider_dragging:
                self.update_variation(event.pos[0])
 
         return None

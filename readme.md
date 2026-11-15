@@ -15,3 +15,5 @@ There are 5 different colour themes to cycle through.
 You can view your artwork with F11 and save it as a png with crtl + s.
 
 There are different settings in the sidebar to fool around with the shapes.
+
+Run with ./main
