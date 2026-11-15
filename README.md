@@ -1,4 +1,4 @@
-##DEVIDE##
+#DEVIDE
 
 An algorithmic art generator.
 
