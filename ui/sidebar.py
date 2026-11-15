@@ -37,7 +37,7 @@ class Sidebar:
         self.variation = 0.15
         self.slider_dragging = False
 
-        self.slider_track = pygame.Rect(20, 440, 240, 8)
+        self.slider_track = pygame.Rect(20, 500, 240, 8)
         self.slider_handle_x = 20 + int(
             (self.variation / 0.4) * 240
         )
@@ -57,12 +57,12 @@ class Sidebar:
 
         self.seed = "42"
         self.seed_active = False
-        self.seed_input = pygame.Rect(20, 340, 240, 40)
-        self.random_seed_button = pygame.Rect(10, 590, 240, 38)
+        self.seed_input = pygame.Rect(20, 410, 240, 40)
+        self.random_seed_button = pygame.Rect(10, 625, 240, 38)
         self.random_seed_button_last_click = -500
 
         self.generate_button = pygame.Rect(
-            20, 650, 240, 50
+            20, 675, 240, 50
         )
 
         self.palette_names = [
@@ -73,8 +73,129 @@ class Sidebar:
             "Monochrome"
         ]
         self.selected_palette = 0
-        self.palette_button = pygame.Rect(10, 530, 240, 45)
+        self.palette_button = pygame.Rect(10, 565, 240, 45)
         self.palette_last_click = -500
+
+        self.algorithm_settings = {
+            "rectangles": {
+                "depth": 8,
+                "min_size": 10
+            },
+            "triangles": {
+                "depth": 5,
+                "variation": 0.15
+            },
+            "branching": {
+                "depth": 9,
+                "length": 150,
+                "angle": -1.5708
+            }
+        }
+
+    def handle_algorithm_settings_click(self, pos):
+        y = 285
+
+        for algorithm in self.algorithms:
+            key = algorithm.lower()
+
+            if key not in self.selected_algorithms:
+                continue
+
+            minus_rect = pygame.Rect(145, y, 28, 24)
+            plus_rect = pygame.Rect(225, y, 28, 24)
+
+            if minus_rect.collidepoint(pos):
+                self.algorithm_settings[key]["depth"] = max(
+                    1,
+                    self.algorithm_settings[key]["depth"] -1
+                )
+                return True
+
+            if plus_rect.collidepoint(pos):
+                self.algorithm_settings[key]["depth"] = min(
+                    12,
+                    self.algorithm_settings[key]["depth"] +1
+                )
+                return True
+            y += 27
+
+        return False
+
+
+    def draw_algorithm_settings(self, screen):
+        y = 250
+
+        title = self.small_font.render(
+            "ALGORITHM SETTINGS",
+            True,
+            self.accent
+        )
+        screen.blit(title, (20,y))
+
+        y += 35
+
+        for algorithm in self.algorithms:
+            key = algorithm.lower()
+
+            if key not in self.selected_algorithms:
+                continue
+
+            depth = self.algorithm_settings[key]["depth"]
+
+            name = self.small_font.render(
+                algorithm,
+                True,
+                self.text_color
+            )
+            screen.blit(name, (20, y +3))
+
+            minus_rect = pygame.Rect(145, y, 28, 24)
+            plus_rect = pygame.Rect(225, y, 28, 24)
+
+            pygame.draw.rect(
+                screen, (45, 45, 55), minus_rect,
+                border_radius=5
+            )
+            pygame.draw.rect(
+                screen, (45, 45, 55), plus_rect,
+                border_radius=5
+            )
+
+            minus_text = self.small_font.render(
+                "-", True, self.text_color
+            )
+            plus_text = self.small_font.render(
+                "+", True, self.text_color
+            )
+            depth_text = self.small_font.render(
+                str(depth), True, self.text_color
+            )
+
+            screen.blit(minus_text, (155, y +2))
+            screen.blit(depth_text, (190, y +2))
+            screen.blit(plus_text, (234, y +2))
+
+            y += 27
+
+            data = self.algorithm_settings[key]
+
+            if key == "rectangles":
+                values = f"Depth: {data['depth']} Min: {data['min_size']}"
+
+            elif key == "triangles":
+                values = f"Depth: {data['depth']} Var: {data['variation']}"
+
+            elif key == "branching":
+                values = f"Depth: {data['depth']} Length: {data['length']}"
+
+            text = self.small_font.render(
+                f"{algorithm}: {values}",
+                True,
+                self.text_color
+            )
+
+            screen.blit(text, (20, y))
+            y += 27
 
     def draw(self, screen):
         pygame.draw.rect(
@@ -95,12 +216,12 @@ class Sidebar:
             True,
             self.accent
         )
-        screen.blit(label, (20, 100))
+        screen.blit(label, (20, 75))
 
         for i, algorithm in enumerate(self.algorithms):
 
             rect = pygame.Rect(
-                20, 135 + i * 45, 240, 38
+                20, 110 + i * 45, 240, 38
             )
 
             selected = algorithm.lower() in self.selected_algorithms
@@ -130,12 +251,14 @@ class Sidebar:
                 (rect.x + 12, rect.y +9)
             )
 
+        self.draw_algorithm_settings(screen)
+
         seed_label = self.small_font.render(
             "SEED",
             True,
             self.accent
         )
-        screen.blit(seed_label, (20, 310))
+        screen.blit(seed_label, (20, 385))
 
         input_color = (
             (60, 60, 80)
@@ -187,12 +310,12 @@ class Sidebar:
         variation_label = self.small_font.render(
             "TRIANGLE VARIATION", True, self.accent
         )
-        screen.blit(variation_label, (20, 405))
+        screen.blit(variation_label, (20, 465))
 
         value_text = self.small_font.render(
             f"{self.variation: .2f}", True, self.text_color
         )
-        screen.blit(value_text, (210, 405))
+        screen.blit(value_text, (210, 465))
 
         pygame.draw.rect(
             screen,
@@ -224,7 +347,7 @@ class Sidebar:
             settings.ACCENT
         )
 
-        screen.blit(label, (10, 495))
+        screen.blit(label, (10, 535))
 
         pygame.draw.rect(
             screen,
@@ -280,6 +403,9 @@ class Sidebar:
 
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 
+                if self.handle_algorithm_settings_click(event.pos):
+                    return "generate"
+
                 if self.random_seed_button.collidepoint(event.pos):
                     current_time = pygame.time.get_ticks()
 
@@ -292,7 +418,7 @@ class Sidebar:
 
                 for i, name in enumerate(self.algorithms):
                     rect = pygame.Rect(
-                        20, 135 + i * 45, 240, 38
+                        20, 110 + i * 45, 240, 38
                     )
 
                     if rect.collidepoint(event.pos):

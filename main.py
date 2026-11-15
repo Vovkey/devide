@@ -85,6 +85,45 @@ def export_artwork(screen, seed):
 
     print(f"Artwork exported: {filepath}")
 
+def generate_current_art(screen, sidebar):
+    seed = int(sidebar.seed or 0)
+    art = {}
+
+    if "rectangles" in sidebar.selected_algorithms:
+        art["rectangles"] = generate_art(
+            "rectangles",
+            seed,
+            x=310 if screen.get_width() == settings.WIDTH else 30,
+            y=50,
+            width=screen.get_width() - (350 if screen.get_width() == settings.WIDTH else 60),
+            height=screen.get_height() - 100,
+            depth=sidebar.algorithm_settings["rectangles"]["depth"]
+        )
+
+    if "triangles" in sidebar.selected_algorithms:
+        art["triangles"] = generate_art(
+            "triangles",
+            seed,
+            points=(
+                (screen.get_width() // 2, 80),
+                (30, screen.get_height() - 80),
+                (screen.get_width() - 30, screen.get_height() - 80)
+            ),
+            depth=sidebar.algorithm_settings["triangles"]["depth"],
+            variation=sidebar.variation
+        )
+
+    if "branching" in sidebar.selected_algorithms:
+        art["branching"] = generate_art(
+            "branching",
+            seed,
+            start=(screen.get_width() // 2, screen.get_height() - 50),
+            length=150,
+            angle=-math.pi / 2,
+            depth=sidebar.algorithm_settings["branching"]["depth"]
+        )
+    return art
+
 def main():
     pygame.init()
 
@@ -100,6 +139,7 @@ def main():
     current_art = {}
 
     running = True
+    fullscreen = False
 
     export_requested = None
 
@@ -119,10 +159,28 @@ def main():
                     seed = sidebar.seed or "0"
                     export_requested = seed
 
+                if event.key == pygame.K_F11:
+                    fullscreen = not fullscreen
+
+                    if fullscreen:
+                        screen = pygame.display.set_mode(
+                            (0, 0),
+                            pygame.FULLSCREEN
+                        )
+                    else: screen = pygame.display.set_mode(
+                        (settings.WIDTH, settings.HEIGHT)
+                    )
+
+                    current_art = generate_current_art(screen, sidebar)
+
             if event.type == pygame.QUIT:
                 running = False
 
             action = sidebar.handle_event(event)
+
+            if action == "generate":
+                current_art = generate_current_art(screen, sidebar)
+
             if sidebar.variation_changed:
                 sidebar.variation_changed = False
 
@@ -138,46 +196,6 @@ def main():
                         depth=5,
                         variation=sidebar.variation
                     )
-
-            if action == "generate":
-                seed = int(sidebar.seed or 0)
-
-                current_art = {}
-
-                if "rectangles" in sidebar.selected_algorithms:
-                    current_art["rectangles"] = generate_art(
-                        "rectangles",
-                        seed,
-                        x=310,
-                        y=50,
-                        width=screen.get_width() - 350,
-                        height=screen.get_height() - 100,
-                        depth=8
-                    )
-
-                if "triangles" in sidebar.selected_algorithms:
-                    current_art["triangles"] = generate_art(
-                        "triangles",
-                        seed,
-                        points=(
-                            (screen.get_width() // 2, 80),
-                            (330, screen.get_height() - 80),
-                            (screen.get_width() - 40, screen.get_height() - 80)
-                        ),
-                        depth=5,
-                        variation=sidebar.variation
-                    )
-
-                if "branching" in sidebar.selected_algorithms:
-                    current_art["branching"] = generate_art(
-                        "branching",
-                        seed,
-                        start=(screen.get_width() // 2, screen.get_height() - 50),
-                        length=150,
-                        angle=-math.pi / 2,
-                        depth=9
-                    )
-
 
         screen.fill(settings.BACKGROUND)
 
@@ -217,14 +235,14 @@ def main():
                     colors["branching"]
                 )
 
-
-        sidebar.draw(screen)
+        if not fullscreen:
+            sidebar.draw(screen)
 
         if export_requested is not None:
             export_artwork(screen, export_requested)
             export_requested = None
 
-        if close_button.collidepoint(pygame.mouse.get_pos()):
+        if not fullscreen and close_button.collidepoint(pygame.mouse.get_pos()):
             pygame.draw.rect(
                 screen,
                 (180, 55, 65),
