@@ -1,8 +1,9 @@
 import random
-from core.renderer import draw_filled_rectangle
 from dataclasses import dataclass
 
+from core.renderer import draw_filled_rectangle
 from settings import HEIGHT
+
 
 @dataclass
 class Rectangle:

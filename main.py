@@ -1,21 +1,19 @@
-import pygame
-from pygame.key import get_mods
-import settings
 import math
-import random
 import os
-
+import random
 from datetime import datetime
 
-from core import renderer
-from core.randomness import get_rng
-from core.generator import generate_art
-from core.palettes import PALETTES
+import pygame
+from pygame.key import get_mods
 
+import settings
+from algorithms.branching import generate_branches
 from algorithms.rectangles import generate_rectangles
 from algorithms.triangles import generate_triangles
-from algorithms.branching import generate_branches
-
+from core import renderer
+from core.generator import generate_art
+from core.palettes import PALETTES
+from core.randomness import get_rng
 from ui.sidebar import Sidebar
 
 rectangle_rng = get_rng(settings.SEED, "rectangles")
@@ -141,9 +139,6 @@ def main():
                         variation=sidebar.variation
                     )
 
-            if action == "random_seed":
-                seed = int(sidebar.seed)
-                current_art = {}
             if action == "generate":
                 seed = int(sidebar.seed or 0)
 

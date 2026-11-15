@@ -1,7 +1,6 @@
+from algorithms.branching import generate_branches
 from algorithms.rectangles import generate_rectangles
 from algorithms.triangles import generate_triangles
-from algorithms.branching import generate_branches
-
 from core.randomness import get_rng
 
 

@@ -1,8 +1,12 @@
-import select
-import pygame
-import settings
-import algorithms
+import datetime
 import random
+import select
+
+import pygame
+
+import algorithms
+import settings
+
 
 class Sidebar:
 
@@ -54,7 +58,8 @@ class Sidebar:
         self.seed = "42"
         self.seed_active = False
         self.seed_input = pygame.Rect(20, 340, 240, 40)
-        self.random_seed_button = pygame.Rect(10, 430, 240, 38)
+        self.random_seed_button = pygame.Rect(10, 590, 240, 38)
+        self.random_seed_button_last_click = -500
 
         self.generate_button = pygame.Rect(
             20, 650, 240, 50
@@ -276,9 +281,13 @@ class Sidebar:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
 
                 if self.random_seed_button.collidepoint(event.pos):
-                    self.seed = str(random.randint(0, 999999999999))
-                    self.seed_active = False
-                    return "random_seed"
+                    current_time = pygame.time.get_ticks()
+
+                    if current_time - self.random_seed_button_last_click >= 500:
+                        self.seed = str(random.randint(0, 999999999999))
+                        self.seed_active = False
+                        self.random_seed_button_last_click = current_time
+                        return "generate"
 
 
                 for i, name in enumerate(self.algorithms):

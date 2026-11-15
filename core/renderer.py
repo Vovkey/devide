@@ -1,5 +1,7 @@
 import math
+
 import pygame
+
 
 def draw_rectangle(surface, x, y, width, height, color):
     pygame.draw.rect(

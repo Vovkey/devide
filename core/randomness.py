@@ -1,5 +1,6 @@
-import random
 import hashlib
+import random
+
 
 def get_rng(global_seed, algorithm_name):
     seed_string = f"{global_seed}:{algorithm_name}"
