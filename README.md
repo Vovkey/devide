@@ -1,6 +1,6 @@
-#DEVIDE
+# DEVIDE
 
-An algorithmic art generator.
+_An algorithmic art generator._
 
 It has 3 different algorithms:
 
