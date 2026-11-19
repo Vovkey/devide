@@ -16,4 +16,15 @@ You can view your artwork with F11 and save it as a png with crtl + s.
 
 There are different settings in the sidebar to fool around with the shapes.
 
-Run with ./main
+## Quick Start
+
+### Running the Pre-compiled Release (Linux)
+Download the standalone executable, make it executable, and run:
+
+```bash
+chmod +x main
+./main
+
+
+
+'pip install pygame-ce` + `python main.py` for the source.
